@@ -1,5 +1,6 @@
 package com.yibao.tablayoutdemo.ui.main;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.yibao.tablayoutdemo.MyGridViewAdapter;
 import com.yibao.tablayoutdemo.R;
@@ -27,7 +29,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment {
+public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -57,6 +59,10 @@ public class PlaceholderFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
+        SwipeRefreshLayout refreshLayout = root.findViewById(R.id.refresh_layout);
+        refreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW);
+        refreshLayout.setProgressViewOffset(true, -20, 50);
+        refreshLayout.setOnRefreshListener(this);
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         initRecyclerView(recyclerView, LinearLayoutManager.VERTICAL);
 
@@ -86,7 +92,7 @@ public class PlaceholderFragment extends Fragment {
     private List<UserInfo> getUserInfo(int ts) {
         ArrayList<UserInfo> mList = new ArrayList<>();
 
-        for (int i = 1; i < 9; i++) {
+        for (int i = 1; i < 50; i++) {
             if (i % 2 == 0) {
                 mList.add(new UserInfo("", ts == 1 ? "O " + i : "新垣结衣 " + i));
             } else {
@@ -95,5 +101,10 @@ public class PlaceholderFragment extends Fragment {
             }
         }
         return mList;
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }
