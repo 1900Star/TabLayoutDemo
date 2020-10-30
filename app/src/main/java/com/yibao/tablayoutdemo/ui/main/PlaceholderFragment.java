@@ -2,6 +2,7 @@ package com.yibao.tablayoutdemo.ui.main;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.yibao.tablayoutdemo.MyGridViewAdapter;
 import com.yibao.tablayoutdemo.R;
 import com.yibao.tablayoutdemo.UserInfo;
@@ -34,6 +36,8 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private PageViewModel pageViewModel;
+    private SwipeRefreshLayout mRefreshLayout;
+    private AppBarLayout mAppBarLayout;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -59,10 +63,11 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
-        SwipeRefreshLayout refreshLayout = root.findViewById(R.id.refresh_layout);
-        refreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW);
-        refreshLayout.setProgressViewOffset(true, -20, 50);
-        refreshLayout.setOnRefreshListener(this);
+        mAppBarLayout = root.findViewById(R.id.app_bar);
+        mRefreshLayout = root.findViewById(R.id.refresh_layout);
+        mRefreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW);
+        mRefreshLayout.setProgressViewOffset(true, -20, 50);
+        mRefreshLayout.setOnRefreshListener(this);
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         initRecyclerView(recyclerView, LinearLayoutManager.VERTICAL);
 
@@ -76,12 +81,22 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
         MyGridViewAdapter adapter = new MyGridViewAdapter(getActivity(), getUserInfo(1));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        initListener();
         return root;
 
     }
 
+    private void initListener() {
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                mRefreshLayout.setEnabled(verticalOffset >= 0);
+            }
+        });
+    }
+
     protected void initRecyclerView(RecyclerView recyclerView, int type) {
-//        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 2);
         manager.setOrientation(type);
         recyclerView.setLayoutManager(manager);
@@ -105,6 +120,11 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRefreshLayout.setRefreshing(false);
+            }
+        }, 1000);
     }
 }
