@@ -21,9 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.yibao.tablayoutdemo.MyAdapter;
 import com.yibao.tablayoutdemo.MyGridViewAdapter;
 import com.yibao.tablayoutdemo.R;
 import com.yibao.tablayoutdemo.UserInfo;
+import com.yibao.tablayoutdemo.view.ScrollItemView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
     private PageViewModel pageViewModel;
     private SwipeRefreshLayout mRefreshLayout;
     private AppBarLayout mAppBarLayout;
+    private ScrollItemView mScrollItemView;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -64,6 +67,7 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
         mAppBarLayout = root.findViewById(R.id.app_bar);
+        mScrollItemView = root.findViewById(R.id.scroll_view_excel);
         mRefreshLayout = root.findViewById(R.id.refresh_layout);
         mRefreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW);
         mRefreshLayout.setProgressViewOffset(true, -20, 50);
@@ -78,7 +82,8 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
                 textView.setText(s);
             }
         });
-        MyGridViewAdapter adapter = new MyGridViewAdapter(getActivity(), getUserInfo(1));
+//        MyGridViewAdapter adapter = new MyGridViewAdapter(getActivity(), getUserInfo(1));
+        MyAdapter adapter = new MyAdapter(getActivity(), getUserInfo(1), mScrollItemView);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         initListener();
@@ -97,11 +102,11 @@ public class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     protected void initRecyclerView(RecyclerView recyclerView, int type) {
-        GridLayoutManager manager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager manager = new GridLayoutManager(getActivity(), 1);
         manager.setOrientation(type);
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), type));
-        recyclerView.setVerticalScrollBarEnabled(true);
+        recyclerView.setVerticalScrollBarEnabled(false);
     }
 
     private List<UserInfo> getUserInfo(int ts) {
